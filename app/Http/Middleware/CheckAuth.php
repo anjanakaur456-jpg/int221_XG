@@ -28,6 +28,16 @@ class CheckAuth
 
         // $middleware->appendToGroup("checkdata",[Agecheck::class,
     //                                     CountryCheck::class]);
-        return $next($request);
+        //return $next($request);
+    
+        if (auth()->user() && auth()->user()->role == 'admin') 
+        {
+            return $next($request);
+        } 
+        return response('Only Admin Allowed', 403);
     }
 }
+
+
+
+

@@ -154,14 +154,14 @@ Route::get('/agecheck', function () {
 })->middleware(ageCheck::class);
 
 //admitcard middleware
-use App\Http\Middleware\admitcard;
-Route::get("file2",function(){
-    return "Now you Can Enter in Exam Hall";
-})->middleware(admitcard::class);
+// use App\Http\Middleware\admitcard;
+// Route::get("file2",function(){
+//     return "Now you Can Enter in Exam Hall";
+// })->middleware(admitcard::class);
 
-Route::get("file3",function(){
-    return "Third Home Page";
-})->middleware("checkdata");
+// Route::get("file3",function(){
+//     return "Third Home Page";
+// })->middleware("checkdata");
 
 use App\Http\Controllers\PRODUCT;   
 Route::resource('/products/all', PRODUCT::class);   
@@ -179,16 +179,81 @@ Route::get('/b', function () {
 });
 
 //template inheritance using blade+extending layout+yield+section
-Route::get('/hom', function () {
+Route::get('/hom1', function () {
     return view('hom');
 });
 
-//parameter constraints
+//parameter constraints of numbers only via pattern matching
 Route::get('/add/{n1}/{n2}',function($n1,$n2){
 return "sum of two numbers: ".$n1+$n2;
 })->where('n1','[0-9]+');
 
 //parameter constraints
-Route::get('/ad/{n1}/{n2}',function($s1,$s2){
-return "concatenation of two strings: ".$s1+$s2;
-})->where('s1','[a-z]+');
+Route::get('/ad/{s1}/{s2}',function($s1,$s2){
+return "concatenation of two strings: ". $s1.$s2;
+})->where('s1','[A-Za-z]+')->where('s2','[A-Za-z]+');
+
+//Alphabets Only
+Route::get('/name/{name}', function ($name) { 
+return $name;
+})->where('name', '[A-Za-z]+');
+
+
+//secure route
+use App\Http\Middleware\CheckAuth;
+Route::get('/dashboard', function () {
+    return "Secure Page";
+})->middleware(CheckAuth::class);
+
+
+//secure multiple routes+group middleware
+Route::get('/login', function () {
+return 'Please log in first.';
+})->name('login');
+
+Route::middleware('auth')->group(function () {
+Route::get('/home', fn () => 'Home');
+Route::get('/dashboard', fn () => 'Secure Page');
+});
+
+//prefix route + group route
+Route::prefix("admin")->group(function()
+{
+    Route::get("/dashboard",function(){
+        return "dashboard";
+    });
+    Route::get("/profile",function(){
+        return "profile";
+    });
+});
+
+//domain route
+ //1. Fixed Domain
+Route::domain('admin.lvh.me')->group(function () {
+    Route::get('/admin', function () {       
+    return "Admin Panel";
+    });
+});
+ //2. Dynamic Subdomain
+Route::domain('{user}.lvh.me')->group(function () {    
+Route::get('/user/{user}', function ($user) {       
+return "Hello " . $user;
+    });
+});
+
+//URL Generation-Current URL
+Route::get('/test', function () {
+        return url()->current();
+        });
+
+ //Full URL (with query)
+Route::get('/testurl', function () {
+        return url()->full();
+        });
+
+// 3. Using Request
+Route::get('/testrequest', function () {
+        return request()->url();
+        });
+
+
