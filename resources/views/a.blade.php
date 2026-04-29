@@ -6,8 +6,9 @@
     <title>Document</title>
 </head>
 <body>
-    <h1>Home</h1>
-    <p>Welcome to the home page!</p>
-    <h1>{{ __('messages.welcome') }}</h1>
+    //4. Using asset()
+<link rel="stylesheet" href="{{ asset('style.css') }}">
+    <h1>Asset Example</h1>
+    <p>This is an example of using the asset() function to link to a CSS file
 </body>
 </html>

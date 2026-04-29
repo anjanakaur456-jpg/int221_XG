@@ -6,8 +6,6 @@
     <title>Document</title>
 </head>
 <body>
-    <h1>Home</h1>
-    <p>Welcome to the home page!</p>
-    <h1>{{ __('messages.welcome') }}</h1>
+    <h1> Hello Laravel </h1>
 </body>
 </html>

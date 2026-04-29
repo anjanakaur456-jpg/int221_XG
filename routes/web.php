@@ -242,12 +242,12 @@ return "Hello " . $user;
 });
 
 //URL Generation-Current URL
-Route::get('/test', function () {
+Route::get('/testurl', function () {
         return url()->current();
         });
 
  //Full URL (with query)
-Route::get('/testurl', function () {
+Route::get('/testurl/{id}', function ($id) {
         return url()->full();
         });
 
@@ -255,5 +255,211 @@ Route::get('/testurl', function () {
 Route::get('/testrequest', function () {
         return request()->url();
         });
+
+//Generating framework urls
+//1. Using url()
+Route::get('/', function () {
+        return url('/home');
+        });
+
+//2. Using route()
+Route::get('/home', function () {
+        return "Home";
+        })->name('home');
+
+Route::get('/testroute', function () {
+        return route('home');
+        });
+
+//3. Using action()
+// use App\Http\Controllers\Homecontroller;
+Route::get('/testaction', function () {
+       return action([Homecontroller::class, 'index']);
+       });
+
+//Generation shortcuts - examples
+//1. to()
+Route::get('/test', function () {
+        return to('/home');
+        });
+
+ //2. route()
+Route::get('/home', fn() => "Home")->name('home');
+
+Route::get('/test', function () {
+       return route('home');
+    });
+
+//3. back()
+Route::get('/back', function () {
+       return back();
+       });
+
+//4. redirect()
+Route::get('/go', function () {
+       return redirect('/home');
+       });
+
+//student registration form validation
+// use App\Http\Controllers\studentcontroller;
+// Route::get('/form', function()
+// {
+//     return view('studentreg');
+// });
+// Route::post('/submit', [studentcontroller::class, 'submit']);
+
+
+//Student Form
+use App\Http\Controllers\StudentController;
+
+//form
+Route::get('/studentform', function()
+{
+  return view('studentform');
+});
+
+Route::post('/students/store', [StudentController::class , 'store']);
+
+
+
+Route::get('/studentlogin',function(){
+    return view('studentlogin');    
+});
+
+//Basic Input – 
+use Illuminate\Http\Request;
+
+Route::get('/form1', function (Request $request) {
+    return view('form');
+    });
+
+
+Route::post('/form1', function (Request $request) {
+    return $request->input('name');
+    });
+
+//Get All Data
+Route::post('/form2', function (Request $request) {
+    return $request->all();});
+
+//Only Specific Data
+Route::post('/form3', function (Request $request) {
+    return $request->only('name', 'email');
+    });
+
+//Query Parameter
+Route::get('/test', function (Request $request) {
+    return $request->query('id');
+    });
+
+    //Email Sending
+use Illuminate\Support\Facades\Mail;
+use App\Mail\testMail;
+
+Route::get('/send', function () {
+    Mail::to('test@gmail.com')->send(new testMail());
+    return 'Email sent successfully!';
+});
+
+//session
+Route::get('/session', function (Request $request) {
+session(['name' => 'LPU']); 
+//store
+$value = session('name'); 
+//access 
+session()->forget('name'); 
+//delete
+return "Stored: LPU | Accessed: " . $value . " | Deleted";
+});
+
+//old input data
+Route::get('/formo', function (Request $request) {
+    return view('formo');
+});
+
+Route::post('/formo', function (Request $request) {
+    return back()->withInput(); // send back old data});
+});
+
+//upload file
+Route::get('/upload', function () {
+    return view('uploadfile');
+});
+
+Route::post('/upload', function (Request $request) {
+    $file = $request->file('image');
+    return $file->store('uploads');
+});
+
+//Set Cookie
+// Route::get('/set', function () {
+//         return response("Cookie Set")->withCookie(cookie('name', 'Laravel', 60));
+//         });
+
+//  //Get Cookie
+// Route::get('/get', function () {    
+//     return request()->cookie('name');
+//     });
+
+ //Delete Cookie
+use Illuminate\Support\Facades\Cookie;
+Route::get('/delete', function () {
+      return response("Deleted")->withCookie(Cookie::forget('name'));
+      });
+
+//LOCALISATION
+Route::get('/lang/{lang}', function ($lang) {
+       app()->setLocale($lang);
+          return view('home');
+          });
+
+//locLization with fallback
+Route::get('/lang/{lang}', function ($lang) {
+    app()->setLocale($lang);
+    return view('lang');
+})->fallback(function () {
+    return "Language not supported";
+});
+
+//form
+Route::get('/studentform', function()
+{
+  return view('studentform');
+});
+
+Route::post('/students/store', [StudentController::class , 'store']);
+
+//1. Query Builder
+use Illuminate\Support\Facades\DB;
+Route::get('/users', function () {
+       return DB::table('users')->get();
+       });
+
+ //2. Eloquent ORM
+use App\Models\User;
+Route::get('/users', function () {
+        return User::all();
+        });
+
+//MODEL
+use App\Models\Post;
+
+// Create a new post
+Post::create(['title' => 'Hello', 'content' => 'World']);
+
+// Get all posts
+$posts = Post::all();
+
+// Find a post by ID
+$post = Post::find(1);
+
+// Update a post
+$post->title = 'Updated Title';
+$post->save();
+
+// Delete a post
+$post->delete();
+
+
 
 
