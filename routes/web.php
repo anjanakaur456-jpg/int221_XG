@@ -430,36 +430,41 @@ Route::get('/studentform', function()
 Route::post('/students/store', [StudentController::class , 'store']);
 
 //1. Query Builder
-use Illuminate\Support\Facades\DB;
-Route::get('/users', function () {
-       return DB::table('users')->get();
-       });
+// use Illuminate\Support\Facades\DB;
+// Route::get('/users', function () {
+//        return DB::table('users')->get();
+//        });
 
- //2. Eloquent ORM
-use App\Models\User;
-Route::get('/users', function () {
-        return User::all();
-        });
+//  //2. Eloquent ORM
+// use App\Models\User;
+// Route::get('/users', function () {
+//         return User::all();
+//         });
 
-//MODEL
+//MODEL (ELOQUENT ORM---crud operations)
 use App\Models\Post;
 
-// Create a new post
-Post::create(['title' => 'Hello', 'content' => 'World']);
+Route::get('/create', function () {
+    Post::create([
+        'title' => 'First Post',
+        'content' => 'This is the content of the first post.'
+    ]);
+    return "Post Created";
+});
 
-// Get all posts
-$posts = Post::all();
+Route::get('/read',function(){
+    return Post::all();
+});
 
-// Find a post by ID
-$post = Post::find(1);
+Route::get('/update/{id}',function($id){
+    $post = Post::find($id);
+    $post->title = "Updated Title";
+    $post->save();
+    return "Post Updated";
+});
 
-// Update a post
-$post->title = 'Updated Title';
-$post->save();
-
-// Delete a post
-$post->delete();
-
-
-
-
+Route::get('/delete/{id}', function($id){
+    $post = Post::find($id);
+    $post->delete();
+    return "Post Deleted";
+});
